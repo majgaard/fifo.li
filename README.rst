@@ -3,10 +3,6 @@ fifo
 
 Queueing App
 
-.. image:: https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg
-     :target: https://github.com/pydanny/cookiecutter-django/
-     :alt: Built with Cookiecutter Django
-
 
 LICENSE: MIT
 
@@ -20,6 +16,72 @@ Moved to settings_.
 
 Basic Commands
 --------------
+
+Installing OS & Python Dependencies
+^^^^^^^^^^^^^^^^^^^^^
+Clone this repo in your private C9 workspace::
+
+    git clone https://github.com/username/repo.git
+
+Or clone a specific branch::
+
+    git clone -b <branch_name> https://github.com/username/repo.git
+
+Install OS dependencies first::
+
+    sudo ./install_os_dependencies.sh install
+
+Create a virtual environment::
+
+    virtualenv <env_name>
+
+Activate the virtual environment::
+
+    source /path/to/<env_name>/bin/activate
+
+Install Python dependencies::
+
+    ./install_python_dependencies.sh
+
+Deactivate the virtual environment::
+
+    deactivate
+
+
+
+Activate PostgresSQL
+^^^^^^^^^^^^^^^^^^^^^
+Start the service (Ubuntu)::
+
+    sudo service postgresql start
+
+Access the shell (Ubuntu)::
+
+    sudo sudo -u postgres psql
+
+Create a new user::
+
+    CREATE USER fifouser WITH PASSWORD '7xkKBfRbkMg9dk';
+
+Create a new database::
+
+    CREATE DATABASE fifodb;
+
+Grant a privileges::
+
+    GRANT ALL PRIVILEGES ON DATABASE fifodb to fifouser;
+
+Show Databases::
+
+    \list
+
+Quit::
+
+    \q
+
+Drop a new database::
+
+    DROP DATABASE fifodb;
 
 Setting Up Your Users
 ^^^^^^^^^^^^^^^^^^^^^
