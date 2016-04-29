@@ -29,7 +29,7 @@ function list_packages(){
 
 function install()
 {
-    list_packages | xargs apt-get --no-upgrade install -y;
+    list_packages | xargs apt-get install -y;
 }
 
 function upgrade()
