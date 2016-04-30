@@ -39,12 +39,14 @@ THIRD_PARTY_APPS = (
     'allauth',  # registration
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
+    'rest_framework', # rest framework
 )
 
 # Apps specific for this project go here.
 LOCAL_APPS = (
     'fifo.users',  # custom users app
-    # Your stuff: custom apps go here
+    'fifo.queues', # queues app
+    'fifo.entries', # entries app
 )
 
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -221,13 +223,16 @@ AUTHENTICATION_BACKENDS = (
 )
 
 # Some really nice defaults
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
 
 ACCOUNT_ALLOW_REGISTRATION = env.bool('DJANGO_ACCOUNT_ALLOW_REGISTRATION', True)
 ACCOUNT_ADAPTER = 'fifo.users.adapters.AccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'fifo.users.adapters.SocialAccountAdapter'
+ACCOUNT_SIGNUP_FORM_CLASS = 'fifo.users.forms.SignupForm'
 
 # Custom user app defaults
 # Select the correct user model
@@ -243,3 +248,12 @@ AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 ADMIN_URL = r'^admin/'
 
 # Your common stuff: Below this line define 3rd party library settings
+
+
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}

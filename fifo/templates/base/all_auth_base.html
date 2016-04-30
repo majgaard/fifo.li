@@ -1,0 +1,70 @@
+{% load staticfiles i18n %}
+<!DOCTYPE html>
+<!--[if IE 9 ]><html class="ie9"><![endif]-->
+    <head>
+    {% block head %}{% include 'base/head.html' %}{% endblock %}
+    {% block extra_head %}{% endblock %}
+
+    <title>{% block title %} fifo.li {% endblock %}</title>
+    {% block css %}
+
+    <link href="{% static 'vendors/bower_components/animate.css/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css' %}" rel="stylesheet">
+
+    <!-- CSS -->
+    <link href="{% static 'css/app.min.1.css' %}" rel="stylesheet">
+    <link href="{% static 'css/app.min.2.css' %}" rel="stylesheet">
+
+    {% endblock %}
+    {% block extra_css %}{% endblock %}
+
+    {#    {% block angular %}#}
+    {#    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"></script>#}
+    {#    {% endblock %}#}
+
+    </head>
+    <body class="login-content">
+
+        {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+
+
+        {% block content %}
+
+
+
+        {% endblock content %}
+
+        {% block modal %}{% endblock modal %}
+
+
+
+
+        {% block loader %} {% include 'base/loader.html' %} {% endblock %}
+
+
+        {% include 'base/oldIEWarning.html' %}
+
+        {% block scripts %}
+
+        <script src="{% static 'vendors/bower_components/jquery/dist/jquery.min.js' %}"></script>
+        <script src="{% static 'vendors/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
+
+        <script src="{% static 'vendors/bower_components/Waves/dist/waves.min.js' %}"></script>
+
+        <!-- Placeholder for IE9 -->
+        <!--[if IE 9 ]>
+            <script src="{% static 'vendors/bower_components/jquery-placeholder/jquery.placeholder.min.js' %}"></script>
+        <![endif]-->
+
+        <script src="{% static 'js/functions.js' %}"></script>
+
+
+        {% endblock %}
+        {% block extra_scripts %}{% endblock %}
+
+    </body>
+  </html>

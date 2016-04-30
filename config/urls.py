@@ -15,12 +15,22 @@ urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     url(settings.ADMIN_URL, include(admin.site.urls)),
 
-    # User management
-    url(r'^users/', include('fifo.users.urls', namespace='users')),
+    # all auth
     url(r'^accounts/', include('allauth.urls')),
 
-    # Your stuff: custom urls includes go here
+    # users
+    url(r'^users/', include('fifo.users.urls', namespace='users')),
 
+    # api
+    url(r'^api/v1/', include('fifo.api_v1.api', namespace='api_v1')),
+
+    # queues
+    #url(r'^queues/', include("fifo.queues.urls", namespace="queues")),
+    
+    # entries
+    #url(r'^entries/', include("fifo.entries.urls", namespace="entries")),
+    
+    
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
@@ -33,3 +43,7 @@ if settings.DEBUG:
         url(r'^404/$', default_views.page_not_found, kwargs={'exception': Exception('Page not Found')}),
         url(r'^500/$', default_views.server_error),
     ]
+
+
+admin.site.site_header = 'fifo.li admin site'
+admin.site.site_title = 'fifo.li staff '

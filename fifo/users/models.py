@@ -15,7 +15,7 @@ class User(AbstractUser):
     
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    org_id = models.IntegerField(_('Organization ID'), blank=False)
+    org_id = models.IntegerField(_('Organization ID'), default=-1, blank=False)
     name = models.CharField(_('Name of User'), blank=False, max_length=255)
     
     phone = models.CharField(_('Phone Number'), max_length=10, blank=True)

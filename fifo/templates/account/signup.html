@@ -7,9 +7,8 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container lc-block toggled">
   <div class="row">
-    <div class="col-md-5">
       <h1>{% trans "Sign Up" %}</h1>
 
       <p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
@@ -22,12 +21,28 @@
         {% endif %}
         <button id="sign-up-button" class="btn btn-primary" type="submit">{% trans "Sign Up" %} &raquo;</button>
       </form>
-    </div>
   </div>
 </div>
 
 
 {% endblock content %}
 
+{% block extra_scripts %}
+    <script>
+        $("label[for='id_first_name']").hide();
+        $("label[for='id_last_name']").hide();
+        $("label[for='id_username']").hide();
+        $("label[for='id_email']").hide();
+        $("label[for='id_password1']").hide();
+        $("label[for='id_password2']").hide();
+        $("label[for='id_org_id']").hide();
+        $("label[for='id_phone']").hide();
+
+        $("#id_first_name").attr("placeholder", "First Name");
+        $("#id_last_name").attr("placeholder", "Last Name");
+        $("#id_org_id").attr("placeholder", "Organization ID");
+        $("#id_phone").attr("placeholder", "Phone Number (xxxyyyzzzz)");
+    </script>
+{% endblock %}
 
 

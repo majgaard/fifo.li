@@ -1,0 +1,55 @@
+{% load staticfiles i18n %}
+
+            <aside id="sidebar" class="sidebar c-overflow">
+                <div class="profile-menu">
+                    <a href="">
+                        <div class="profile-pic">
+                            <img src="{% static 'img/profile-pics/1.png' %}" alt="">
+                        </div>
+
+                        <div class="profile-info">
+                             {% if request.user.is_authenticated %}
+                                {{request.user.name}}
+                              {% else %}
+                                  Anonymous
+                              {% endif %}
+                            <i class="zmdi zmdi-caret-down"></i>
+                        </div>
+                    </a>
+
+                    <ul class="main-menu">
+                        
+                        {% if request.user.is_authenticated %}
+                        
+                        <!--<li>-->
+                        <!--    <a href="#"><i class="zmdi zmdi-account"></i> View Profile</a>-->
+                        <!--</li>-->
+                        <li>
+                            <a href=""><i class="zmdi zmdi-settings"></i> Settings</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'account_logout' %}"><i class="zmdi zmdi-time-restore"></i> Logout</a>
+                        </li>
+                        
+                        {% else %}
+                        <li>
+                            <a href="{% url 'account_login' %}"><i class="zmdi zmdi-account"></i>Login</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'account_signup' %}"><i class="zmdi zmdi-time-restore"></i> SignUp</a>
+                        </li>
+                        
+                        
+                        {% endif %}
+                        
+                    </ul>
+                </div>
+
+                <ul class="main-menu">
+                    <li>
+                        <a href="{% url 'home' %}"><i class="zmdi zmdi-view-dashboard"></i> <strong>Dashboard</strong></a>
+                    </li>
+                    
+                    
+                </ul>
+            </aside>
