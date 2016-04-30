@@ -1,0 +1,354 @@
+{% extends "base/base.html" %}
+
+
+{% block title %}Dashboard{% endblock %}
+
+
+{% block content %}
+
+
+<div class="row">
+    
+    
+{% for queue, entries in active_queues %}
+
+<div class="col-sm-4">
+    <div class="card" id="{{queue.id}}">
+        <div class="card-header bgm-blue4">
+             <h2>{{queue.name}}</h2>
+            <h5 style="color: white;">with {{queue.owner.name}}</h5>
+        </div>
+
+        <div class="card-body card-padding">
+
+            <h4>{{queue.description}}</h4>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal{{queue.id}}" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bgm-blue4">
+                <h4 class="modal-title c-white">{{queue.name}}</h4>
+            </div>
+            <div class="modal-body">
+                <h4><strong>Owner</strong></h4> <h5> {{queue.owner.username}}</h5>
+                <br>
+                <h4><strong>Description</strong></h4><h5> {{queue.description}}<h5>
+                <br>
+                {% if entries|length == 1 %}
+                    <h4>{{entries|length}} person ahead of you<h4>
+                {% else %}
+                    <h4>{{entries|length}} people ahead of you<h4>
+                {% endif %}
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+                <!--<button type="button" class="btn btn-link">Join</button>-->
+
+            </div>
+        </div>
+    </div>
+    
+    
+        <!--style="width: 0; height:0; overflow: hidden;"-->
+    <div class="formContainer" >
+      <form class="cardForm" id="cardForm{{queue.id}}">
+       <input type="number" name="cardField" id="cardField{{queue.id}}">
+      </form>
+    </div>
+
+</div>
+
+
+{% endfor %}
+
+</div>
+
+<div class="formContainer" >
+  <form class="cardForm" id="cardFormMain">
+   <input type="number" name="cardField" id="cardFieldMain">
+  </form>
+</div>
+
+
+<div class="modal fade" id="modalEntry" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header bgm-blue4">
+            <h4 id="modalEntryName"class="modal-title c-white">Entry Name</h4>
+        </div>
+        <div class="modal-body">
+            <h4><strong>Owner</strong></h4> <h5 id="modalEntryOwner"> Name</h5>
+            <br>
+            <h4><strong>Description</strong></h4><h5 id="modalEntryDescription"> Description<h5>
+            <br>
+            
+            <h4 id="modalEntryPositioin">0<h4>
+        
+              
+            
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-link">Drop Out</button>
+
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+
+
+{% block extra_scripts %}
+
+<script>
+    $( document ).ready(function() {
+        
+        
+        var org_id = null;
+        var queue_id = null;
+        
+        // fires when card is clicked, shows modal
+        $('.card').click(function(e) {  
+           
+            var id = $(this).attr('id');
+            $("#modal"+id).modal('show');
+            
+        });
+        
+        
+        // fires when modal is shown
+        $('.modal').on('shown.bs.modal', function (e) {
+            var id = $(this).attr('id');
+            
+            if (id == "modalEntry")
+                return;
+            
+            var res = id.replace("modal", "");
+            grabFocus(res);
+        })
+        
+        $(".cardForm").submit(function(){
+            console.log("jquery submit");
+            var id = $(this).attr('id');
+            var res = id.replace("Form", "Field");
+            var field = document.getElementById(res);
+            console.log(field.value + " entered in " + res);
+            
+            org_id = field.value;
+            queue_id = res.replace("cardField", "");
+            user_exists();
+            
+            field.value = "";
+            return false;
+        });
+        
+        $('.modal').keypress(function(){
+            var id = $(this).attr('id');
+            var res = id.replace("modal", "");
+            var entryid ="cardField"+ res;
+            if($(":focus").attr('id')!=entryid){
+                grabFocus(res);
+            }
+        });
+        
+        
+        function grabFocus(modalId){
+              var entry = document.getElementById("cardField"+ modalId);
+              console.log(modalId);
+              entry.focus();
+              console.log("grabbed focus");
+        }
+        
+        
+        // existing entry stuff
+        function showEntry(response){
+            console.log(response);
+            
+            
+            $("#modalEntry").modal('show');
+        }
+        
+        
+        function updateEntry(id){
+            var data_load = ""
+            
+            var method_type = "PATCH";
+            var data_type = "json";
+
+            var api_url = "{% url 'api_v1:entry' 0 %}";
+            var api_url = api_url.replace("0", id);
+
+            
+            var success = function(response){
+                console.log("entry updated ");
+                
+                
+            }
+            
+            var fail = function(response){
+                console.log("entry failed to update ");
+            }
+            
+            // create
+            api_request(data_load, method_type, api_url, data_type, success, fail);
+        }
+        
+        
+        // ###################
+        
+        // checks entry
+        function isWaiting(id){
+            var data_load = ""
+            
+            var method_type = "GET";
+            var data_type = "json";
+
+            var api_url = "{% url 'api_v1:active_entry' 0 %}";
+            var api_url = api_url.replace("0", id);
+
+            
+            var success = function(response){
+                console.log("entry exists ");
+                $('.modal').modal('hide');
+                showEntry(response);
+                
+            }
+            
+            var fail = function(response){
+                console.log("no it doesn't ");
+                createEntry(id);
+            }
+            
+            // create
+            api_request(data_load, method_type, api_url, data_type, success, fail);
+        
+        }
+        
+        // creates entry
+        function createEntry(id){
+            // creates below
+            
+            var data_load = {
+                "active": true,
+                "queue": queue_id,
+                "owner": id,
+                "resolved": false
+            }
+            
+            
+            console.log(data_load);
+            
+            var method_type = "POST";
+            var data_type = "json";
+
+            var api_url = "{% url 'api_v1:entries' %}";
+            
+            
+            var success = function(response){
+                $('.modal').modal('hide');
+                swal("entry created");
+            }
+            
+            var fail = function(response){
+                swal("failed to save");
+            }
+            
+            // create
+            api_request(data_load, method_type, api_url, data_type, success, fail);
+        }
+        
+        
+        
+        
+        // user exists success callback
+        // if it does, check if an entry is already there
+        var success_callback = function(response){
+            isWaiting(response['id'])
+        }
+        
+        // user exists fail callback 
+        // go to signup page
+        var fail_callback = function(response){
+            $('.modal').modal('hide');
+            window.location = "{% url 'account_signup' %}"
+        }
+        
+        
+        
+        
+        // checks if user_exists, grabs org_id from global var
+        function user_exists() {
+            var data_load = "";
+            var method_type = "GET";
+            var data_type = "json";
+
+            var api_url = "{% url 'api_v1:user_exists' 0 %}";
+            var api_url = api_url.replace("0", org_id);
+            
+            
+            api_request(data_load, method_type, api_url, data_type, success_callback, fail_callback);
+
+        }
+        
+        
+        
+        
+        
+        
+        // ########## API ########## 
+        
+        
+        // csrf
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        
+        // general api call
+        function api_request(data_load, method_type, api_url, data_type, success_callback, fail_callback){
+        
+            // setup
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain){
+                        xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}");
+                    }
+                }
+            });
+        
+            // ajax
+            $.ajax({
+                type: method_type,
+                url: api_url,
+                dataType: data_type,
+                data: data_load,
+                success: function(response){
+                    success_callback(response);
+                },
+                error: function(response) {
+                    fail_callback(response);
+                }
+            });
+        }
+        
+        
+            
+    
+    });
+    
+ 
+    
+    
+
+    
+    
+</script>
+
+{% endblock %}
