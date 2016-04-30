@@ -1,0 +1,47 @@
+{% extends "base/base.html" %}
+
+{% block title %} {% endblock %}
+
+{% block content %}
+
+
+<div class="row">
+    
+    
+{% for queue in queues %}
+
+<div class="col-sm-4">
+    <div class="card" id="{{queue.id}}">
+        <div class="card-header bgm-blue4">
+             <h2>{{queue.name}}</h2>
+            <h5 style="color: white;">with {{queue.owner.name}}</h5>
+        </div>
+
+        <div class="card-body card-padding">
+
+            <h4>{{queue.description}}</h4>
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endfor %}
+
+</div>
+
+
+
+
+{% endblock %}
+
+
+
+
+{% block extra_scripts %}
+
+
+
+
+{% endblock %}

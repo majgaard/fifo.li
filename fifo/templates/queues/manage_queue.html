@@ -1,0 +1,178 @@
+{% extends "base/base.html" %}
+
+{% block title %} {% endblock %}
+
+{% block content %}
+
+<!--<div class="col-sm-12">-->
+<!--    <div class="card" id="{{queue.id}}">-->
+<!--        <div class="card-header bgm-blue2">-->
+<!--             <h2>{{queue.name}}</h2>-->
+<!--            <h5 style="color: white;">with {{queue.owner.name}}</h5>-->
+<!--        </div>-->
+
+<!--        <div class="card-body card-padding">-->
+
+<!--            <h4></h4>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+
+
+{% for e in entries %}
+
+<div class="col-sm-12">
+    <div class="card" id="{{e.id}}">
+        <div class="card-header bgm-blue4">
+             <h2>{{e.owner.name}}</h2>
+            <h5 style="color: white;">checked in at {{e.created}}</h5>
+        </div>
+
+        <div class="card-body card-padding">
+            <button id="start" name="{{e.id}}" class="btn btn-danger btn-block">Start</button>
+
+            <button id="end" name="{{e.id}}" class="btn btn-default btn-block">End</button>
+            <button id="resolve" name="{{e.id}}" class="btn btn-primary btn-block">Resolve</button>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+{% endfor %}
+
+
+
+{% endblock %}
+
+
+
+
+{{% block extra_scripts %}
+
+<script>
+    $( document ).ready(function() {
+
+        $("#start").click( function(){
+            
+            $(this).hide()
+            var d = new Date();
+            var formatted = formatDate(d);
+            
+            
+            data_load = {
+                start: formatted
+            }
+            
+            var success_callback = function(){
+                
+            }
+            
+            var fail_callback = function(){
+                
+            }
+            
+            var api_url = "{% url 'api_v1:entry' 0 %}";
+            var api_url = api_url.replace("0", $(this).attr('name'));
+                
+            
+            
+            
+            api_request(data_load, "PATCH", api_url,"json", success_callback, fail_callback);
+            // start timer
+            // notify user
+            // text message
+        });
+        
+        function formatDate(date) {
+          var hours = date.getHours();
+          var minutes = date.getMinutes();
+          var strTime = hours + ':' + minutes;
+          return date.getFullYear() + '-' + date.getMonth()+1 + '-' + date.getDate() + 'T' + strTime;
+        }
+        
+        
+        
+        $("#resolve").click( function(){
+            updateEntry($(this).attr('name'), true);
+            
+            
+        });
+        
+        $("#end").click( function(){
+            updateEntry($(this).attr('name'), false);
+        });
+        
+            function updateEntry(id, resolved){
+                
+                var data_load = {
+                    active:false,
+                    resolve:resolved
+                }
+                
+                var method_type = "PATCH";
+                var data_type = "json";
+                
+                var api_url = "{% url 'api_v1:entry' 0 %}";
+                var api_url = api_url.replace("0", id);
+                
+                
+                // reset entry modal 
+                var success = function(response){
+                    location.reload();
+                }
+                
+                var fail = function(response){
+                    swal("Something went wrong :(");
+                }
+                
+                
+                api_request(data_load, method_type, api_url, data_type, success, fail);
+            }
+        
+        
+         // ##################################################################### 
+        // API 
+        
+        // csrf
+        function csrfSafeMethod(method) {
+            // these HTTP methods do not require CSRF protection
+            return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+        }
+        
+        // general api call
+        function api_request(data_load, method_type, api_url, data_type, success_callback, fail_callback){
+        
+            // setup
+            $.ajaxSetup({
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain){
+                        xhr.setRequestHeader("X-CSRFToken", "{{csrf_token}}");
+                    }
+                }
+            });
+        
+            // ajax
+            $.ajax({
+                type: method_type,
+                url: api_url,
+                dataType: data_type,
+                data: data_load,
+                success: function(response){
+                    success_callback(response);
+                },
+                error: function(response) {
+                    fail_callback(response);
+                }
+            });
+        }
+        
+        
+    
+    });
+</script>
+
+{% endblock %} %}

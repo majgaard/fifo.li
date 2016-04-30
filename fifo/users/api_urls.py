@@ -15,8 +15,14 @@ urlpatterns = [
             name='user'
     ),
     url(
-            regex=r'users/exists/(?P<org_id>\d+)/$',
-            view=api_views.UserRetrieveView.as_view(),
-            name='user_exists'
+            regex=r'users/exists/orgid/(?P<org_id>\d+)/$',
+            view=api_views.UserRetrieveViewOrgId.as_view(),
+            name='user_exists_orgid'
     ),
+    url(
+            regex=r'users/exists/id/(?P<id>\d+)/$',
+            view=api_views.UserRetrieveViewId.as_view(),
+            name='user_exists_id'
+    ),
+    
 ]

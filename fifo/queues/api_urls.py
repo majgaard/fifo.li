@@ -14,6 +14,7 @@ urlpatterns = [
             view=api_views.QueueRetrieveUpdateDestroyView.as_view(),
             name='queue'
     ),
+   
     
     url(
             regex=r'staff/queues/$',
@@ -24,6 +25,11 @@ urlpatterns = [
             regex=r'host/queues/$',
             view=api_views.HostQueueListView.as_view(),
             name='host_queues'
+    ),
+     url(
+            regex=r'queues/read/(?P<id>[\w.@+-]+)/$',
+            view=api_views.QueueRetrieveView.as_view(),
+            name='read_queue'
     ),
   
     url(

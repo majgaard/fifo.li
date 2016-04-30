@@ -25,7 +25,7 @@ urlpatterns = [
     url(r'^api/v1/', include('fifo.api_v1.api', namespace='api_v1')),
 
     # queues
-    #url(r'^queues/', include("fifo.queues.urls", namespace="queues")),
+    url(r'^queues/', include("fifo.queues.urls", namespace="queues")),
     
     # entries
     #url(r'^entries/', include("fifo.entries.urls", namespace="entries")),

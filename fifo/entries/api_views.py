@@ -35,7 +35,7 @@ class EntryCreateView(generics.CreateAPIView):
     lookup_field = 'id'
 
 
-class ActiveEntryRetrieveView( generics.RetrieveAPIView):
+class ActiveEntryRetrieveView(generics.RetrieveAPIView):
     
     serializer_class = EntrySerializer
     lookup_field = 'owner'

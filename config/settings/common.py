@@ -237,8 +237,8 @@ ACCOUNT_SIGNUP_FORM_CLASS = 'fifo.users.forms.SignupForm'
 # Custom user app defaults
 # Select the correct user model
 AUTH_USER_MODEL = 'users.User'
-LOGIN_REDIRECT_URL = 'users:redirect'
-LOGIN_URL = 'account_login'
+LOGIN_REDIRECT_URL = 'home'
+LOGIN_URL = 'home'
 
 # SLUGLIFIER
 AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'

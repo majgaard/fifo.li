@@ -9,9 +9,9 @@
 
                         <div class="profile-info">
                              {% if request.user.is_authenticated %}
-                                {{request.user.name}}
+                                {{request.user.first_name}} {{request.user.last_name}}
                               {% else %}
-                                  Anonymous
+                                  Colby User
                               {% endif %}
                             <i class="zmdi zmdi-caret-down"></i>
                         </div>
@@ -45,11 +45,21 @@
                     </ul>
                 </div>
 
+
                 <ul class="main-menu">
                     <li>
                         <a href="{% url 'home' %}"><i class="zmdi zmdi-view-dashboard"></i> <strong>Dashboard</strong></a>
                     </li>
                     
+                     {% if request.user.is_authenticated %}
+
+                    <li>
+                        <a href="{% url 'queues:all_queues' %}"><i class="zmdi zmdi-view-home"></i> <strong>All Queues</strong></a>
+                    </li>
+                    <li>
+                        <a href="{% url 'queues:active_queues' %}"><i class="zmdi zmdi-view-home"></i> <strong>Active Queues</strong></a>
+                    </li>
+                    {% endif %}
                     
                 </ul>
             </aside>

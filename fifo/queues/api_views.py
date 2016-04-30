@@ -45,4 +45,9 @@ class StaffQueueRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView)
     serializer_class = QueueSerializer
     lookup_field = 'id'
     
+
+class QueueRetrieveView(generics.RetrieveAPIView):
+    queryset = Queue.objects.filter(active=True)
+    serializer_class = QueueSerializer
+    lookup_field = 'id'
     

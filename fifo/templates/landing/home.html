@@ -51,26 +51,12 @@
             </div>
         </div>
     </div>
-    
-    
-        <!--style="width: 0; height:0; overflow: hidden;"-->
-    <div class="formContainer" >
-      <form class="cardForm" id="cardForm{{queue.id}}">
-       <input type="number" name="cardField" id="cardField{{queue.id}}">
-      </form>
-    </div>
 
 </div>
 
 
 {% endfor %}
 
-</div>
-
-<div class="formContainer" >
-  <form class="cardForm" id="cardFormMain">
-   <input type="number" name="cardField" id="cardFieldMain">
-  </form>
 </div>
 
 
@@ -81,7 +67,7 @@
             <h4 id="modalEntryName"class="modal-title c-white">Entry Name</h4>
         </div>
         <div class="modal-body">
-            <h4><strong>Owner</strong></h4> <h5 id="modalEntryOwner"> Name</h5>
+            <h4><strong>Owner</strong></h4> <h5 id="modalEntryOwner">Name</h5>
             <br>
             <h4><strong>Description</strong></h4><h5 id="modalEntryDescription"> Description<h5>
             <br>
@@ -92,8 +78,8 @@
             
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-link">Drop Out</button>
+            <button type="button" class="btn btn-link" id='canceldropout' data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-link" id='dropout' >Drop Out</button>
 
         </div>
     </div>
@@ -110,9 +96,17 @@
 <script>
     $( document ).ready(function() {
         
-        
+        // global vars
         var org_id = null;
         var queue_id = null;
+        var last_entry = null;
+        var modalOpen = false;
+        
+        
+        
+        // ##################################################################### 
+        // hidden stuff
+        
         
         // fires when card is clicked, shows modal
         $('.card').click(function(e) {  
@@ -125,59 +119,72 @@
         
         // fires when modal is shown
         $('.modal').on('shown.bs.modal', function (e) {
+            modalOpen = true;
+            console.log("modal open true");
             var id = $(this).attr('id');
             
             if (id == "modalEntry")
                 return;
             
             var res = id.replace("modal", "");
-            grabFocus(res);
-        })
-        
-        $(".cardForm").submit(function(){
-            console.log("jquery submit");
-            var id = $(this).attr('id');
-            var res = id.replace("Form", "Field");
-            var field = document.getElementById(res);
-            console.log(field.value + " entered in " + res);
-            
-            org_id = field.value;
-            queue_id = res.replace("cardField", "");
-            user_exists();
-            
-            field.value = "";
-            return false;
+            queue_id = res;
         });
         
-        $('.modal').keypress(function(){
-            var id = $(this).attr('id');
-            var res = id.replace("modal", "");
-            var entryid ="cardField"+ res;
-            if($(":focus").attr('id')!=entryid){
-                grabFocus(res);
-            }
+                // fires when modal is shown
+        $('.modal').on('hidden.bs.modal', function (e) {
+            modalOpen = false;
+            queue_id = null;
+            console.log("modal open false");
         });
         
+        // ###################################
+        // Key press code   
         
-        function grabFocus(modalId){
-              var entry = document.getElementById("cardField"+ modalId);
-              console.log(modalId);
-              entry.focus();
-              console.log("grabbed focus");
-        }
+        var pressed = false; 
+            var chars = []; 
+            $(window).keypress(function(e) {
+                if (e.which >= 48 && e.which <= 57) {
+                    chars.push(String.fromCharCode(e.which));
+                }
+                console.log(e.which + ":" + chars.join("|"));
+                if (pressed == false) {
+                    setTimeout(function(){
+                        // check we have a long length e.g. it is a barcode
+                        if (chars.length >= 5) {
+                            org_id = chars.join("");
+                            console.log("IDcode Scanned: " + org_id);
+                            user_exists();
+                        }
+                        chars = [];
+                        pressed = false;
+                    },500);
+                }
+                pressed = true;
+            });
         
+        //####################################
+        
+        
+        
+        // $(document).keypress(function() {
+        //   console.log(document.activeElement); 
+        // });
+    
         
         // existing entry stuff
         function showEntry(response){
             console.log(response);
+            getQueue(response['queue']);
             
-            
-            $("#modalEntry").modal('show');
         }
         
+        // ##################################################################### 
+        // update entry (delete)
         
         function updateEntry(id){
-            var data_load = ""
+            var data_load = {
+                active:false
+            }
             
             var method_type = "PATCH";
             var data_type = "json";
@@ -186,24 +193,28 @@
             var api_url = api_url.replace("0", id);
 
             
+            // reset entry modal 
             var success = function(response){
-                console.log("entry updated ");
+                swal("Dropped Out!", "You have left the queue.", "success"); 
                 
-                
+                $("#modalEntry").modal('hide');
+                $('#modalEntryOwner').empty();
+                $('#modalEntryName').empty();
+                $('#modalEntryDescription').empty();
             }
             
             var fail = function(response){
-                console.log("entry failed to update ");
+                swal("Oops", "Looks like something went wrong."); 
             }
             
-            // create
+            
             api_request(data_load, method_type, api_url, data_type, success, fail);
         }
         
         
-        // ###################
+        // ##################################################################### 
+        // Check if user has an entry
         
-        // checks entry
         function isWaiting(id){
             var data_load = ""
             
@@ -214,16 +225,27 @@
             var api_url = api_url.replace("0", id);
 
             
+            // hide the modal 
             var success = function(response){
                 console.log("entry exists ");
                 $('.modal').modal('hide');
+                
+                last_entry = response["id"]; // need this for update (delete) later
+                
                 showEntry(response);
                 
             }
             
             var fail = function(response){
-                console.log("no it doesn't ");
-                createEntry(id);
+                console.log("entry doesn't exists ");
+                if(queue_id != null)
+                    createEntry(id);
+                    
+                else{
+                    swal("Woah", "First select a queue, then swipe."); 
+                    console.log("modal open false")
+                    modalOpen = false;
+                }
             }
             
             // create
@@ -231,6 +253,7 @@
         
         }
         
+        // ##################################################################### 
         // creates entry
         function createEntry(id){
             // creates below
@@ -250,21 +273,24 @@
 
             var api_url = "{% url 'api_v1:entries' %}";
             
-            
+        
             var success = function(response){
                 $('.modal').modal('hide');
-                swal("entry created");
+                swal("Thanks!", "We'll let you know when it's your turn.", "success")
             }
             
             var fail = function(response){
-                swal("failed to save");
+                swal("Sorry", "Something went wrong...")
             }
             
             // create
             api_request(data_load, method_type, api_url, data_type, success, fail);
+            
+            queue_id = null;
         }
         
-        
+        // ##################################################################### 
+        // User Exists (ORG ID)
         
         
         // user exists success callback
@@ -289,7 +315,7 @@
             var method_type = "GET";
             var data_type = "json";
 
-            var api_url = "{% url 'api_v1:user_exists' 0 %}";
+            var api_url = "{% url 'api_v1:user_exists_orgid' 0 %}";
             var api_url = api_url.replace("0", org_id);
             
             
@@ -298,12 +324,109 @@
         }
         
         
+       
+
+        // ##################################################################### 
+        // Get Queue
+        
+        function getQueue(id){
+
+            var data_load = ""
+            
+
+            var method_type = "GET";
+            var data_type = "json";
+
+            var api_url = "{% url 'api_v1:read_queue' 0 %}";
+            var api_url = api_url.replace("0", id);
+
+            
+            // on success update modal name and description, getUser name
+            // add listeners
+            var success = function(response){
+                console.log("got queue");
+                
+                
+                $('#modalEntryName').append(response['name']);
+                $('#modalEntryDescription').append(response['description']);
+                
+                getUser(response['owner']);
+                
+                $( "#dropout" ).click(function() {
+                    swal({   
+                        title: "Are you sure?",   
+                        text: "You will not be able to recover your position in the queue.",  
+                        type: "warning",   
+                        showCancelButton: true,   
+                        confirmButtonColor: "#DD6B55",   
+                        confirmButtonText: "Yes, drop out!",   
+                        closeOnConfirm: false }, 
+                        function(){  
+                            updateEntry(last_entry);
+                        });
+                    
+                });
+                
+                $( "#canceldropout" ).click(function() {
+                    $('#modalEntryOwner').empty();
+                    $('#modalEntryName').empty();
+                    $('#modalEntryDescription').empty();
+                    
+                });
+                
+                queue_id = null;
+                // delete this when getUser works
+                $("#modalEntry").modal('show');
+                
+                
+            }
+            
+            var fail = function(response){
+                console.log("could not get queue");
+                queue_id = null;
+            }
+            
+            // create
+            api_request(data_load, method_type, api_url, data_type, success, fail);
+        }     
         
         
+        // ##################################################################### 
+        // Get User
+        
+        function getUser(id){
+
+            var data_load = ""
+            
+
+            var method_type = "GET";
+            var data_type = "json";
+
+            var api_url = "{% url 'api_v1:user_exists_id' 0 %}";
+            var api_url = api_url.replace("0", id);
+
+            
+            // on success, update owner on entry model and show it
+            var success = function(response){
+                console.log("got user");
+                
+                
+                $('#modalEntryOwner').append(response['owner']);
+                
+                $("#modalEntry").modal('show');
+            }
+            
+            var fail = function(response){
+                console.log("could not get user");
+            }
+            
+            // create
+            api_request(data_load, method_type, api_url, data_type, success, fail);
+        }     
         
         
-        // ########## API ########## 
-        
+        // ##################################################################### 
+        // API 
         
         // csrf
         function csrfSafeMethod(method) {
