@@ -10,4 +10,4 @@ class EntrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Entry
         fields = ('id', 'active', 'queue', 'owner', 'created', 'start', 'finish', 'resolved',)
-        read_only_fields = ('id', 'owner', 'queue', 'created',)
+        read_only_fields = ('id', 'created',)

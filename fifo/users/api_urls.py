@@ -14,4 +14,9 @@ urlpatterns = [
             view=api_views.UserRetrieveUpdateView.as_view(),
             name='user'
     ),
+    url(
+            regex=r'users/exists/(?P<org_id>\d+)/$',
+            view=api_views.UserRetrieveView.as_view(),
+            name='user_exists'
+    ),
 ]

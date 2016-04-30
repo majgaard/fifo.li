@@ -1344,6 +1344,12 @@ a.text-success:hover,
 a.text-success:focus {
   color: #49a84d;
 }
+a.fill-div {
+    display: block;
+    height: 100%;
+    width: 100%;
+    text-decoration: none;
+}
 .text-info {
   color: #31708f;
 }
@@ -8069,6 +8075,37 @@ a.waves-effect .waves-ripple {
 .c-indigo {
   color: #3f51b5 !important;
 }
+.bgm-blue1{
+  background-color: #007df1 !important;
+}
+.bgm-blue2{
+  background-color: #4ca9ff !important;
+}
+.bgm-blue3{
+  background-color: #0084ff !important;
+}
+.bgm-blue4{
+  background-color: #26557f !important;
+}
+.bgm-blue5{
+  background-color: #006acc !important;
+}
+.c-blue1{
+  color: #007df1 !important;
+}
+.c-blue2{
+  color: #4CA9FF !important;
+}
+.c-blue3{
+  color: #0084FF !important;
+}
+.c-blue4{
+  color: #26557F !important;
+}
+.c-blue5{
+  color: #006ACC !important;
+}
+
 /*
  * Background Colors
  */

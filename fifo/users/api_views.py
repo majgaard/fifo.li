@@ -14,6 +14,13 @@ class UserListView(generics.ListAPIView):
     serializer_class = UserSerializer
     lookup_field = 'id'
 
+class UserRetrieveView(generics.RetrieveAPIView):
+
+    #permission_classes = (IsAuthenticated,)
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    lookup_field = 'org_id'
+
 
 class UserRetrieveUpdateView(generics.RetrieveUpdateAPIView):
     

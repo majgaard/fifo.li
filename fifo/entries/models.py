@@ -17,8 +17,8 @@ class Entry(models.Model):
     queue = models.ForeignKey(Queue, null=False, related_name='entries')
     created = models.DateTimeField(auto_now_add=True)
     
-    start = models.DateTimeField(_('start date'), blank=True)
-    finish = models.DateTimeField(_('finish date'), blank=True)
+    start = models.DateTimeField(_('start date'), blank=True, null=True)
+    finish = models.DateTimeField(_('finish date'), blank=True, null=True)
     
     
     resolved = models.BooleanField(_('resolved'), default=False, blank=False)
