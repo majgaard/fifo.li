@@ -97,10 +97,23 @@ MANAGERS = ADMINS
 # DATABASE CONFIGURATION
 # ------------------------------------------------------------------------------
 # See: https://docs.djangoproject.com/en/dev/ref/settings/#databases
+# DATABASES = {
+#     # Raises ImproperlyConfigured exception if DATABASE_URL not in os.environ
+#     'default': env.db('DATABASE_URL', default='postgres:///fifo'),
+# }
+
 DATABASES = {
-    # Raises ImproperlyConfigured exception if DATABASE_URL not in os.environ
-    'default': env.db('DATABASE_URL', default='postgres:///fifo'),
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'fifodb',
+        'USER': 'fifouser',
+        'PASSWORD': '7xkKBfRbkMg9dk',
+        'HOST': '127.0.0.1',
+        'PORT': '5432',
+    }
 }
+
+
 DATABASES['default']['ATOMIC_REQUESTS'] = True
 
 
