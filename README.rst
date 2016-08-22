@@ -1,7 +1,23 @@
-fifo
+fifo.li
 ==============================
 
-Queueing App
+fifo.li is a Django based queueing app built for the 2016 Colby College Hackathon.
+
+By leveraging an existing RFID system built into student ID cards, fifo.li allows
+users to instantly join any queue of their choosing (TA assistance,
+Professorial assistance during office hours, Tech Helpdesk) by simply tapping
+their Student ID at a public fifo.li dashboard (or by logging in on their device).
+
+Users are shown who is available to help, what their subjects of expertise are,
+and how many people are in line. Driven by statistics, the system also lets
+users see approximately how long they have to wait before a given host can
+help them.
+
+Queue hosts are empowered with a powerful dashboard which lets them keep track
+of who is next as well as log statistics about their sessions and info about
+particular users. These statistics also help supervisors/employers see who isn't
+pulling their weight, or who might need a little more help.
+
 
 
 LICENSE: MIT
@@ -137,5 +153,3 @@ Docker
 See detailed `cookiecutter-django Docker documentation`_.
 
 .. _`cookiecutter-django Docker documentation`: http://cookiecutter-django.readthedocs.org/en/latest/deployment-with-docker.html
-
-
